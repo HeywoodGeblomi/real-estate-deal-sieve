@@ -16,19 +16,21 @@ from core.ranker import pure_python_weak_dominance
 
 def test_known_pareto():
     # Classic 2-obj case (lower better)
-    # Points: A(1,4), B(2,3), C(3,2), D(4,1), E(2.5,2.5), F(5,5)
-    # Non-dominated should be A,B,C,D (E dominated by B and C, F dominated by all)
+    # A(1,5), B(2,4), C(3,3), D(4,2), E(5,1) = non-dominated front
+    # F(2.5,4.5) dominated by B (2<=2.5 and 4<4.5)
+    # G(6,6) dominated by all
     X = np.array([
-        [1.0, 4.0],  # A rank 1
-        [2.0, 3.0],  # B rank 1
-        [3.0, 2.0],  # C rank 1
-        [4.0, 1.0],  # D rank 1
-        [2.5, 2.5],  # E rank 2
-        [5.0, 5.0],  # F rank 2+
+        [1.0, 5.0],  # rank 1
+        [2.0, 4.0],  # rank 1
+        [3.0, 3.0],  # rank 1
+        [4.0, 2.0],  # rank 1
+        [5.0, 1.0],  # rank 1
+        [2.5, 4.5],  # dominated by B → >1
+        [6.0, 6.0],  # dominated → >1
     ], dtype=np.float64)
     ranks = pure_python_weak_dominance(X)
-    assert ranks[0] == 1 and ranks[1] == 1 and ranks[2] == 1 and ranks[3] == 1, f"Front wrong: {ranks}"
-    assert ranks[4] > 1 and ranks[5] > 1, f"Dominated not layered: {ranks}"
+    assert all(ranks[i] == 1 for i in range(5)), f"Front wrong: {ranks}"
+    assert ranks[5] > 1 and ranks[6] > 1, f"Dominated not layered: {ranks}"
     print("[verify] known Pareto case PASS")
 
 def test_sample_shape():
@@ -40,7 +42,7 @@ def test_sample_shape():
     ranks = pure_python_weak_dominance(matrix)
     n_nd = int((ranks == 1).sum())
     assert n_nd >= 1, "no non-dominated"
-    assert n_nd <= 32, "all non-dominated impossible for this sample"
+    assert n_nd <= 31, "too many non-dominated for this sample"
     print(f"[verify] sample ranking PASS — {n_nd} non-dominated of 32")
 
 def main():
