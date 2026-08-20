@@ -6,14 +6,14 @@ Isolates the weak-dominance (non-dominated) frontier from competing objectives s
 
 Powered by [PrymGyroSort](https://github.com/HeywoodGeblomi/PrymGyroSort) + [GyroRank](https://github.com/HeywoodGeblomi/GyroRank).
 
-## What the MVP does
+## What it does
 
-1. Upload or provide a CSV of deals (cap_rate, cash_on_cash, risk_score, liquidity_score, vacancy_risk, etc.).
+1. Take a CSV of deals (cap_rate, cash_on_cash, risk_score, liquidity_score, vacancy_risk, …).
 2. Map selected columns into an N×2 objective matrix (lower = better after normalization).
 3. Rank by exact weak dominance.
-4. Return ranked list + non-dominated flag + basic stress view + (later) Pareto visualization.
+4. Return ranked list + non-dominated flag + deterministic stress view.
 
-Deliberately narrow. No portfolio optimization, no machine-learning predictions, no automatic scraping, no χ layers.
+Deliberately narrow. No portfolio optimization, no ML predictions, no scraping, no χ layers.
 
 ## Honesty (mandatory)
 
@@ -25,44 +25,51 @@ See **[NON_CLAIMS.md](NON_CLAIMS.md)**.
 - EXTERNAL-clean / no-χ. Ranking is pure weak-dominance on the supplied objectives.
 - `promote_ready = false` for any commercial “recommended investment” claim.
 
-## Quick start (local CLI)
+## Two ways to use it
+
+### 1. Self-serve (Streamlit)
 
 ```bash
-# From the real-estate-deal-sieve/ root
-
-# Full end-to-end demo (adapter → rank → format → stress view)
-python scripts/run_local_demo.py
-
-# Or step-by-step
-python adapter/csv_to_matrix.py \
-  --csv data/sample_deals.csv \
-  --obj1 cap_rate --obj1-higher \
-  --obj2 risk_score \
-  --out-dir output --profile cashflow
-
-# Ranking uses pure-Python weak-dominance by default (exact for M=2).
-# Optional: set PRYM_GYRO_SORT_ROOT to a sibling PrymGyroSort checkout for native GyroRank.
+git clone https://github.com/HeywoodGeblomi/real-estate-deal-sieve
+cd real-estate-deal-sieve
+pip install -r requirements.txt
+streamlit run app/streamlit_app.py
 ```
 
-## Profiles (via column_mapper)
+Or deploy to Streamlit Community Cloud / Railway — see **[DEPLOY.md](DEPLOY.md)**.
+
+### 2. Concierge (manual ranking service)
+
+See **[CONCIERGE.md](CONCIERGE.md)**.
+
+Send a deal CSV → receive ranked non-dominated list + stress view ($49 / $99). Faster path to first revenue.
+
+### Local CLI / verification
+
+```bash
+python scripts/verify.py          # must PASS
+python scripts/run_local_demo.py  # sample deals → ranked table + stress
+```
+
+## Profiles
 
 - cashflow / cash_on_cash focused
 - balanced
 - appreciation
-- stress_resistant (rates / vacancy / exit pressure)
+- stress_resistant
 - liquidity
+- custom (any two columns)
 
 ## Stack
 
-- Adapter + presentation: Python
-- Ranking core: existing PrymGyroSort / GyroRank (or pure-Python fallback)
-- Web (next): Streamlit or FastAPI + HTMX
-- No re-implementation of the ranking kernel.
+- Ranking: pure-Python exact 2-obj weak-dominance (optional native GyroRank)
+- Web: Streamlit
+- No re-implementation of the ranking kernel
 
 ## Credits
 
 Ranking kernel: GyroRank / PrymGyroSort (Heywood Geblomi / THE BEASTIE BOYZ)  
-Real-estate domain adapter: THE BEASTIE BOYZ
+Real-estate domain adapter + web + concierge: THE BEASTIE BOYZ
 
 ## License
 
