@@ -73,4 +73,11 @@ Real-estate domain adapter + web + concierge: THE BEASTIE BOYZ
 
 ## License
 
-MIT
+**Dual licensed.**
+
+- Non-commercial / research / evaluation / non-production → [AGPLv3](LICENSE-AGPL)
+- Commercial / production / embedding / SaaS / redistribution as product → requires a [paid proprietary Commercial License](LICENSE-COMMERCIAL)
+
+See [LICENSE](LICENSE) for the dual statement and [COMMERCIAL.md](COMMERCIAL.md) for how to request a grant.
+
+Until a commercial grant is issued in writing, AGPLv3 governs all use.
